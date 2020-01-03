@@ -19,7 +19,7 @@ resource "aws_instance" "backend" {
   ami                    = "ami-04763b3055de4860b"
   instance_type          = "t2.micro"
   key_name               = "Terraform_demo"
-  vpc_security_group_ids = "sg-075ca3a5467ab6a3e"
+  vpc_security_group_ids = ["sg-075ca3a5467ab6a3e"]
 }
 
 resource "null_resource" "remote-exec-1" {
