@@ -6,8 +6,6 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
-  private_key = "${file(var.pvt_key)}"
-    host        = "${aws_instance.backend.public_ip}"
 }
 
 # resource "aws_instance" "backend" {
