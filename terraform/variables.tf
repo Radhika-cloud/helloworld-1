@@ -3,7 +3,7 @@ variable "key_name" {
 }
 
 variable "pvt_key" {
-  default = "/pemfol/terraform/demo.pem"
+  default = "/pem/terraform/demo.pem"
 }
 
 variable "us-east-zones" {
