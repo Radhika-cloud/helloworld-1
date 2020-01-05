@@ -1,9 +1,9 @@
 variable "key_name" {
-  default = "Terraform_demo"
+  default = "demo"
 }
 
 variable "pvt_key" {
-  default = "/var/lib/jenkins/Terraform_demo.pem"
+  default = "/var/lib/jenkins/demo.pem"
 }
 
 variable "us-east-zones" {
