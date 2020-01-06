@@ -1,7 +1,13 @@
 node {
+
+stage('start sonarqube and artifactory container'){
+   sh label: 'container started',  script: 'docker start sonarqube'
+    sh 'docker start artifactory'
+}
     
 stage('Git CheckOut') {    
-git url: 'https://github.com}
+git url: 'https://github.com/Radhika-cloud/helloworld-1.git'
+}
 
 def project_path="src/main/java/com/demo/helloworld"
 dir(project_path) {
@@ -9,23 +15,50 @@ dir(project_path) {
 stage('Clean Old Packages') {
 sh label: 'Clean', script: 'mvn clean'
 }
+
 stage('Maven Compile') {
-sh label: 'Comile', script: 'mvn compile'
+sh label: 'Compile', script: 'mvn compile'
 }
 stage('Maven Test') {
 sh label: 'Testing', script: 'mvn test'
+}
+
+stage('SonarQube analysis') {
+    withSonarQubeEnv(credentialsId: 'Sonar-secret-text', installationName: 'SonarQube') { 
+    sh 'mvn sonar:sonar'
+    }            
 }
 
 stage('Maven Package') {
 sh label: 'Testing', script: 'mvn package'
 }
 
-stage('display'){
-sh echo "completed"
+stage('Jfrog Artifacory'){
+    script{
+        def server = Artifactory.server 'JFrog-Artifactory'
+        def uploadSpec = """{
+             "files": [            {
+                 "pattern": "**/*.jar",
+                "target": "demo_301"}]
+         }"""
+        server.upload(uploadSpec)
+    }
 }
 
+stage('Archive Package') {
+archive 'target/*.jar'
+}
+
+stage('Deploy Code info Docker Env.') {
+sh label: 'Docker', script: 'docker-compose up -d --build'
+}  
+    
+stage('Deploy to Prod.') {
+def project_path_1 = "../../../terraform"
+dir(project_path_1) {    
+sh label: 'terraform', script: '/bin/terraform  init'
+sh label: 'terraform', script: '/bin/terraform  apply -input=false -auto-approve'
 }   
-    
+}   
 }    
-    
 }
